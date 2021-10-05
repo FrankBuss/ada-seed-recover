@@ -1,0 +1,8 @@
+[package]
+name = "ada-seed-recover"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+bip39 = "1.0.1"
+bitcoin_hashes = "0.9.4"
