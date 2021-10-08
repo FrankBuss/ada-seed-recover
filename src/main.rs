@@ -2,12 +2,12 @@ use bip39::*;
 use bitcoin_hashes::{sha256, Hash};
 
 // simplified copy of Mnemonic::parse_in, because it doesn't allow 15 word seeds
-pub fn parse_15_words(all_words: &[&str], passphrase: Vec<String>) -> bool {
+pub fn parse_15_words<'a>(all_words: &[&str], passphrase: &Vec<&'a str>) -> bool {
     assert_eq!(passphrase.len(), 15);
     let mut words = [0; 15];
     let mut bits = [false; 15 * 11];
     for (i, word) in passphrase.iter().enumerate() {
-        let idx = match all_words.iter().position(|w| *w == word.to_string()) {
+        let idx = match all_words.iter().position(|w| w == word) {
             Some(x) => x,
             None => return false,
         };
@@ -38,12 +38,12 @@ fn main() {
     let language = Language::English;
     let all_words = language.words_by_prefix("");
     let words = "sock verb fiction spot repair cotton illness elbow olive core dove elevator van direct bronze";
+    let mut list: Vec<&'_ str> = words.split_whitespace().collect();
     let mut count = 0;
     for word in all_words {
-        let mut list: Vec<String> = words.split_whitespace().map(|s| s.into()).collect();
         let end = list.len() - 1;
-        list[end] = word.to_string();
-        if parse_15_words(all_words, list) {
+        list[end] = word;
+        if parse_15_words(all_words, &list) {
             count += 1;
             println!("found: {}", word);
         }
